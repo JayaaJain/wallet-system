@@ -1,0 +1,200 @@
+openapi: 3.0.0
+info:
+  version: '1.0'
+  title: Wallet System
+  description: API Design for Wallet System
+  contact:
+    name: GOHIGHLEVEL-DEV
+tags:
+  - name: wallet
+  - name: transactions
+servers:
+  - url: walletSystem/api/v1
+    description: API Server URL for Wallet System
+components:
+  schemas:
+    wallet:
+      type: object
+      required:
+        - id
+        - balance
+        - name
+        - date
+      properties:
+        id:
+          type: string
+          format: uuid
+        balance:
+          type: number
+        name:
+          type: string
+        date:
+          type: string
+          format: date-time
+    transaction:
+      type: object
+      required:
+        - id
+        - walletId
+        - amount
+        - balance
+        - description
+        - date
+        - type
+      properties:
+        id:
+          type: string
+          format: uuid
+        walletId:
+          type: string
+          format: uuid
+        amount:
+          type: number
+        balance:
+          type: number
+        description:
+          type: string
+        date:
+          type: string
+          format: date-time
+        type:
+          type: string
+          enum:
+            - CREDIT
+            - DEBIT
+    balance:
+      type: object
+      required:
+        - balance
+        - transactionId
+      properties:
+        balance:
+          type: number
+        transactionId:
+          type: string
+          format: uuid
+paths:
+  '/wallet/{id}':
+      get:
+        tags:
+          - wallet
+        operationId: get-wallet
+        description: Get Wallet details
+        parameters:
+          - name: id
+            in: path
+            description: Unique ID of the wallet
+            required: true
+            schema:
+              type: string
+        responses:
+          '200':
+            description: Wallet Retrieved
+            content:
+              application/json:
+                schema:
+                  type: object
+                  allOf:
+                  - $ref: '#/components/schemas/wallet'
+  '/setup':
+    post:
+      tags:
+        - wallet
+      operationId: initialize-wallet
+      description: Initialize new wallet details
+      requestBody:
+        description: Setup a new wallet.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                balance:
+                  type: number
+      responses:
+        '200':
+          description: Wallet Initialised
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/wallet'
+                - type: object
+                  required:
+                    - transactionId
+                  properties:
+                    transactionId:
+                      type: string
+                      format: uuid
+  '/transact/{walletId}':
+    post:
+      tags:
+        - transactions
+      operationId: transact-wallet-amount
+      description: Credit/Debit amount to wallet
+      parameters:
+        - name: walletId
+          in: path
+          description: Unique ID of the wallet
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: credit/debit the requested amount to the wallet
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                amount:
+                  type: number
+      responses:
+        '200':
+          description: Successful transaction
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/balance'
+  '/transactions':
+    get:
+      tags:
+        - transactions
+      operationId: get-all-transactions
+      description: Get Wallet transactions details
+      parameters:
+        - name: walletId
+          in: query
+          description: Unique ID of the wallet
+          required: true
+          schema:
+            type: string
+        - name: skip
+          in: query
+          description: Number of transactions to be skipped from start
+          required: false
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Number of transactions to be fetched
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: All transactions retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  type: object
+                  allOf:
+                  - $ref: '#/components/schemas/transaction'              
