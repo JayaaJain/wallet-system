@@ -1,15 +1,15 @@
 const express = require('express');
-const app = express();
 const mongoose = require('mongoose');
-const port = process.env.PORT || '3000';
+const MONGO_URL = require('./config/dbConfig');
 const walletRoutes = require('./routes/wallet');
+const app = express();
+const port = process.env.PORT || '3000';
 
 require('./prod')(app);
 app.use(express.json());
-app.use('/walletSystem/api/v1', walletRoutes)
+app.use('/api', walletRoutes)
 app.listen(port, () => console.log(`Server listening at ${port}`))
-
-mongoose.connect('mongodb://0.0.0.0:27017/walletSystem').then(() => {
+mongoose.connect(`${MONGO_URL}/walletSystem`).then(() => {
     console.log('Connected to MongoDB! :D');
 }).catch(err => {
     console.log('Not Connected to MongoDB! :/', err);
