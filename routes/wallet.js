@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
-const transactionType = require('../shared/enum');
+const transactionType = { Credit: 'CREDIT', Debit: 'DEBIT' };
 
 const Wallet = mongoose.model('Wallet', new mongoose.Schema({
     id: String,
@@ -63,9 +63,6 @@ router.post('/transact/:walletId', async (req, res) => {
     wallet.balance += amount;
     let newTransaction = await addNewTransaction(givenWalletId, amount, wallet.balance, description);
     wallet.transactions.push(newTransaction.id);
-    
-    console.log(wallet);
-
     
     const result = await wallet.save();
     const walletDetails = (({ balance }) => ({ balance }))(result);
