@@ -9,7 +9,7 @@ require('./prod')(app);
 app.use(express.json());
 app.use('/api', walletRoutes)
 app.listen(port, () => console.log(`Server listening at ${port}`))
-mongoose.connect(`${MONGO_URL}/walletSystem`).then(() => {
+mongoose.connect(`${MONGO_URL}`).then(() => {
     console.log('Connected to MongoDB! :D');
 }).catch(err => {
     console.log('Not Connected to MongoDB! :/', err);
