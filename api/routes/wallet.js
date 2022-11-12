@@ -1,90 +1,104 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
-const wallets = {}, transactions = {}
+const transactionType = require('../shared/enum');
 
-router.post('/setup', (req, res) => {
-    var newWallet = {
-        "id": uuidv4(),
-        "balance": req.body.balance,
-        "name": req.body.name,
-        "date": new Date().toISOString(),
-        "transactionId": uuidv4(),
-      }
-    wallets[newWallet.id] = {
-        "transactions": [newWallet.transactionId],
-        "balance": newWallet.balance,
-        "name": newWallet.name,
-        "date": newWallet.date
-    }
-    transactions[newWallet.transactionId] = {
-        balance: newWallet.balance,
-        amount: newWallet.balance,
-        description: 'Wallet setup successful',
-        date: newWallet.date,
-        type: req.body.balance > 0 ? 'CREDIT' : 'DEBIT'
-    }
-    res.send(newWallet);
-});
+const Wallet = mongoose.model('Wallet', new mongoose.Schema({
+    id: String,
+    name: String,
+    balance: Number,
+    date: {type: Date, default: Date.now},
+    transactions: [String],
+}));
 
-router.get('/wallet/:id', (req, res) => {
-    var givenWalletId = req.params.id;
-    if(!wallets[givenWalletId]) {
-        res.status(404).json({errors: {message: 'Object not found'}})
-        return false;
-    }
-    var walletDetails = {
-        "id": givenWalletId,
-        "balance": wallets[givenWalletId].balance,
-        "name": wallets[givenWalletId].name,
-        "date": wallets[givenWalletId].date
-      }
+const Transaction = mongoose.model('Transaction', new mongoose.Schema({
+    id: String,
+    walletId: String,
+    amount: Number,
+    balance: Number,
+    description: String,
+    date: {type: Date, default: Date.now},
+    type: {type: String, enum: transactionType, default: transactionType.Credit}
+}));
+
+router.post('/setup', async (req, res) => {
+    let name = req.body.name;
+    let balance = req.body.balance;
+    let walletId = uuidv4();
+    const newTransaction = await addNewTransaction(walletId, balance, balance, 'Wallet setup successful');
+    const wallet = new Wallet({
+        id: walletId,
+        name: name,
+        balance: balance,
+        transactions: [newTransaction.id]
+    });
+    const result = await wallet.save();
+    const walletDetails = (({ id, name, balance, date }) => ({ id, balance, name, date }))(result);
+    walletDetails['transactionId'] = result.transactions[0];
     res.send(walletDetails);
 });
 
-router.post('/transact/:walletId', (req, res) => {
-    var newTransactionId =  uuidv4();
-    if(!wallets[req.params.walletId]) {
-        res.status(404).json({errors: {message: 'Object not found'}})
-        return;
+router.get('/wallet/:id', async (req, res) => {
+    var givenWalletId = req.params.id;
+    const wallet = await Wallet.findOne({id: givenWalletId}).select("id balance name date");
+    if(!wallet) {
+        res.status(404).send({errors: {message: 'Object not found'}})
     }
-    wallets[req.params.walletId].transactions.push(newTransactionId);
-    wallets[req.params.walletId].balance += req.body.amount;
-    transactions[newTransactionId] = {
-        balance: wallets[req.params.walletId].balance,
-        amount: req.body.amount,
-        description: req.body.description,
-        date: new Date().toISOString(),
-        type: req.body.amount > 0 ? 'CREDIT' : 'DEBIT'
-    }
-    res.send({
-        "balance": wallets[req.params.walletId].balance,
-        "transactionId": newTransactionId
-      });
+    const walletDetails = (({ id, name, balance, date }) => ({ id, balance, name, date }))(wallet);
+    res.send(walletDetails);
 });
 
-router.get('/transactions', (req, res) => {
-    var allTransactions = [];
-    var givenWalletId = req.query.walletId;
-    if(!wallets[givenWalletId]) {
-        res.status(404).json({errors: {message: 'Object not found'}})
-        return false;
+router.post('/transact/:walletId', async (req, res) => {
+    var givenWalletId = req.params.walletId;
+    var amount = req.body.amount;
+    var description = req.body.description;
+
+    const wallet = await Wallet.findOne({id: givenWalletId});
+
+    if(!wallet) {
+        res.status(404).send({errors: {message: 'Object not found'}})
     }
-    var givenWallet = wallets[givenWalletId]
-    //TODO: splice for skip and slice limit
-    for(let eachTransaction of givenWallet.transactions) {
-        eachTransaction = {
-            "id": eachTransaction,
-            "walletId": givenWalletId,
-            "amount": transactions[eachTransaction].amount,
-            "balance": transactions[eachTransaction].balance,
-            "description": transactions[eachTransaction].description,
-            "date": transactions[eachTransaction].date,
-            "type": transactions[eachTransaction].type
-          }
-        allTransactions.push(eachTransaction);
-    }
-    res.send(allTransactions);
+
+    wallet.balance += amount;
+    let newTransaction = await addNewTransaction(givenWalletId, amount, wallet.balance, description);
+    wallet.transactions.push(newTransaction.id);
+    
+    console.log(wallet);
+
+    
+    const result = await wallet.save();
+    const walletDetails = (({ balance }) => ({ balance }))(result);
+    walletDetails['transactionId'] = newTransaction.id;
+    res.send(walletDetails);
 });
+
+router.get('/transactions', async (req, res) => {
+    var givenWalletId = req.query.walletId;
+    var skip = req.query.skip;
+    var limit = req.query.limit;
+
+    const wallet = await Wallet.find({id: givenWalletId});
+
+    if(!wallet) {
+        res.status(404).send({errors: {message: 'Object not found'}})
+    }
+    const transactions = await Transaction.find({walletId: givenWalletId}).skip(skip).limit(limit);
+    res.send(transactions);
+});
+
+async function addNewTransaction(walletId, amount, balance, description) {
+    const type = amount > 0 ? transactionType.Credit : transactionType.Debit;
+    const transaction = new Transaction({
+        id: uuidv4(),
+        walletId: walletId,
+        description: description,
+        amount: amount,
+        balance: balance,
+        type: type
+    });
+    const result = await transaction.save();
+    return result;
+}
 
 module.exports = router;
