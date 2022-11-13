@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class WalletService {
-  public url: string = 'http://localhost:3000/api' //'https://wallet-system.up.railway.app/api';
+  public url: string = 'https://wallet-system.up.railway.app/api';
 
   constructor(private httpClient: HttpClient) { }
 
