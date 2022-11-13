@@ -25,9 +25,9 @@
         <div class="name">
             <label>Wallet Name*</label>
             <input type="text" formControlName="walletName"
-            [ngClass]="addWalletForm.get('walletName')?.touched && !addWalletForm.get('walletName')?.valid? 'error': '' " >
-            <span class="input-text-helper" *ngIf="addWalletForm.get('walletName')?.touched && !addWalletForm.get('walletName')?.valid">
-                <div *ngIf="addWalletForm.get('walletName')?.errors?.['required']">Wallet name is required</div>
+            [ngClass]="isFormInvalid('walletName') ? 'error': 'success' " >
+            <span class="input-text-helper" *ngIf="isFormInvalid('walletName')">
+                <div>Wallet name is required</div>
             </span>
             <span class="status-icons">
               <i aria-hidden="true" class="fa fa-times-circle error-icon"></i>
@@ -36,9 +36,9 @@
         <div class="balance">
             <label>Balance Amount </label>
             <input type="text" formControlName="balance"
-            [ngClass]="addWalletForm.get('balance')?.touched && !addWalletForm.get('balance')?.valid? 'error': '' " >
-            <span class="input-text-helper" *ngIf="addWalletForm.get('balance')?.touched && !addWalletForm.get('balance')?.valid">
-                <div *ngIf="addWalletForm.get('balance')?.errors?.['pattern']">Enter a valid amount.</div>
+            [ngClass]="isFormInvalid('balance') ? 'error': 'success' " >
+            <span class="input-text-helper" *ngIf="isFormInvalid('balance')">
+                <div>Enter a valid amount.</div>
             </span>
             <span class="status-icons">
               <i aria-hidden="true" class="fa fa-times-circle error-icon"></i>

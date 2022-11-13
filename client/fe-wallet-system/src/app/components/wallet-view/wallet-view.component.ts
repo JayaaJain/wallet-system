@@ -46,4 +46,8 @@ export class WalletViewComponent implements OnInit {
     }
   }
 
+  isFormInvalid(control: string) {
+    return this.addWalletForm.get(control)?.touched && !this.addWalletForm.get(control)?.valid
+  }
+
 }
