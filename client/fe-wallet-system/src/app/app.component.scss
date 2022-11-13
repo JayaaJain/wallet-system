@@ -1,0 +1,69 @@
+.app-body {
+    // float: left;
+    // width: 100%;
+    // padding: 0 40px;
+    margin: 40px 0px 0px 40px;
+
+    .app-header {
+      padding-bottom: 70px;
+    }
+
+    .tabs-container {
+        float: left;
+        height: 100%;
+
+        ul.tabs {
+            list-style: none;
+            float: left;
+            height: 100%;
+            background-color: transparent;
+            padding: 0;
+            margin: 0;
+
+            li.tab {
+              float: left;
+              background-color: #ffffff;
+              width: auto;
+              display: flex;
+              align-items: center;
+              
+              margin-right: 35px;
+              height: 28px;
+              vertical-align: middle;
+              cursor: pointer;
+          
+              a {
+                float: left;
+                font-size: 34px;
+                font-weight: bold;
+                display: block;
+                text-align: left;
+                text-decoration: none;
+                box-sizing: border-box;
+                border-bottom: none;
+                color: #738796;
+
+                &.active {
+                  color: #2387aa;
+                  border-bottom: 3px solid #2387aa;
+                }
+          
+                &:hover {
+                  color: #005578;
+                  border-bottom: 3px solid #005578;
+                }
+              }
+            }
+          }
+
+        .tabs {
+            .separator {
+                span {
+                    border-left: 3px solid #738796;
+                    margin: 0 20px;
+                    height: 24px;
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,97 @@
+.wallet-form {
+    justify-content: center;
+    display: flex;
+    margin-top: 100px;
+
+    .name {
+        label {
+            font-size: 32px;
+        }
+        input {
+            margin-left: 55px;
+            font-size: 25px;
+            border: none;
+            border-bottom: 1px solid #738796;
+
+            &:hover {
+                outline: none;
+                border-bottom: 1px solid #005578;
+            }
+
+            &:focus {
+                outline: none;
+                border-bottom: 1px solid #2387aa;
+            }
+        }
+        .error {
+            border-bottom: 1px solid #df0000;
+
+            & ~ .input-text-helper {
+                padding-left: 250px;
+                display: block;
+                color: #df0000;
+            }
+        }
+    }
+
+    .balance {
+        margin-top: 20px;
+        label {
+            font-size: 32px;
+        }
+        input {
+            margin-left: 20px;
+            font-size: 25px;
+            border: none;
+            border-bottom: 1px solid #738796;
+
+            &:hover {
+                outline: none;
+                border-bottom: 1px solid #005578;
+            }
+
+            &:focus {
+                outline: none;
+                border-bottom: 1px solid #2387aa;
+            }
+        }
+        .error {
+            border-bottom: 1px solid #df0000;
+
+            & ~ .input-text-helper {
+                padding-left: 250px;
+                display: block;
+                color: #df0000;
+            }
+        }
+    }
+
+    .submit-button {
+        justify-content: center;
+        display: flex;
+        margin-top: 50px;
+
+        .primary-button {
+            width: 150px;
+            height: 50px;
+            font-size: x-large;
+            background: #2387aa;
+            color: #ffffff;
+            outline: none;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            text-decoration: none;
+
+            &:hover {
+                background-color: #005578;
+            }
+
+            &:disabled {
+                background-color: #cdd9e1;
+                cursor: not-allowed;
+            }
+        }
+
+    }
+}
