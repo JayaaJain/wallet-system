@@ -7,7 +7,7 @@ const transactionType = { Credit: 'CREDIT', Debit: 'DEBIT' };
 const Wallet = mongoose.model('Wallet', new mongoose.Schema({
     id: String,
     name: String,
-    balance: Number,
+    balance: {type: Number, default: 0.0000},
     date: {type: Date, default: Date.now},
     transactions: [String],
 }));
@@ -15,8 +15,8 @@ const Wallet = mongoose.model('Wallet', new mongoose.Schema({
 const Transaction = mongoose.model('Transaction', new mongoose.Schema({
     id: String,
     walletId: String,
-    amount: Number,
-    balance: Number,
+    amount: {type: Number, default: 0.0000},
+    balance: {type: Number, default: 0.0000},
     description: String,
     date: {type: Date, default: Date.now},
     type: {type: String, enum: transactionType, default: transactionType.Credit}
@@ -24,7 +24,7 @@ const Transaction = mongoose.model('Transaction', new mongoose.Schema({
 
 router.post('/setup', async (req, res) => {
     let name = req.body.name;
-    let balance = req.body.balance ? Number(req.body.balance.toFixed(4)) : 0;
+    let balance = parseFloat(req.body.balance);
     let walletId = uuidv4();
     const newTransaction = await addNewTransaction(walletId, balance, balance, 'Wallet setup successful');
     const wallet = new Wallet({
@@ -51,7 +51,7 @@ router.get('/wallet/:id', async (req, res) => {
 
 router.post('/transact/:walletId', async (req, res) => {
     var givenWalletId = req.params.walletId;
-    var amount = Number(req.body.amount.toFixed(4));
+    var amount = parseFloat(req.body.amount);
     var description = req.body.description;
 
     const wallet = await Wallet.findOne({id: givenWalletId});
@@ -60,8 +60,7 @@ router.post('/transact/:walletId', async (req, res) => {
         res.status(404).send({errors: {message: 'Object not found'}})
     }
 
-    wallet.balance += amount;
-    wallet.balance = Number(wallet.balance.toFixed(4));
+    wallet.balance = parseFloat(wallet.balance) + parseFloat(amount);
     let newTransaction = await addNewTransaction(givenWalletId, amount, wallet.balance, description);
     wallet.transactions.push(newTransaction.id);
     

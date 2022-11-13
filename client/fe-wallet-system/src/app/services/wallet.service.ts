@@ -17,4 +17,13 @@ export class WalletService {
   async getWallet(walletId: string) {
     return await this.httpClient.get(this.url + `/wallet/${walletId}`).toPromise();
   }
+
+  async payment(walletId: string, amount: number = 0, description: string) {
+    let payload = { amount: amount, description: description }
+    return await this.httpClient.post(this.url + `/transact/${walletId}`, payload, {observe: 'response'}).toPromise()
+  }
+
+  async getTransactions(walletId: string) {
+    return await this.httpClient.get<any>(this.url + `/transactions?walletId=${walletId}`).toPromise();
+  }
 }

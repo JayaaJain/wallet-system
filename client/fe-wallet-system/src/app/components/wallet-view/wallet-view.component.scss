@@ -23,18 +23,9 @@
                 border-bottom: 1px solid #2387aa;
             }
         }
-        .error {
-            border-bottom: 1px solid #df0000;
-
-            & ~ .input-text-helper {
-                padding-left: 250px;
-                display: block;
-                color: #df0000;
-            }
-        }
     }
 
-    .balance {
+    .balance, .amount, .description {
         margin-top: 20px;
         label {
             font-size: 32px;
@@ -44,54 +35,134 @@
             font-size: 25px;
             border: none;
             border-bottom: 1px solid #738796;
-
+        
             &:hover {
                 outline: none;
                 border-bottom: 1px solid #005578;
             }
-
+        
             &:focus {
                 outline: none;
                 border-bottom: 1px solid #2387aa;
             }
         }
-        .error {
-            border-bottom: 1px solid #df0000;
-
-            & ~ .input-text-helper {
-                padding-left: 250px;
-                display: block;
-                color: #df0000;
-            }
-        }
-    }
-
-    .submit-button {
-        justify-content: center;
-        display: flex;
-        margin-top: 50px;
-
-        .primary-button {
-            width: 150px;
-            height: 50px;
-            font-size: x-large;
-            background: #2387aa;
-            color: #ffffff;
-            outline: none;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-            text-decoration: none;
-
-            &:hover {
-                background-color: #005578;
-            }
-
-            &:disabled {
-                background-color: #cdd9e1;
-                cursor: not-allowed;
-            }
-        }
-
     }
 }
+
+.error {
+    border-bottom: 1px solid #df0000;
+
+    & ~ .input-text-helper {
+        padding-left: 250px;
+        display: block;
+        color: #df0000;
+    }
+}
+
+.submit-button {
+    justify-content: center;
+    display: flex;
+    margin-top: 50px;
+
+    .primary-button {
+        width: 150px;
+        height: 50px;
+        font-size: x-large;
+        background: #2387aa;
+        color: #ffffff;
+        outline: none;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+        text-decoration: none;
+
+        &:hover {
+            background-color: #005578;
+        }
+
+        &:disabled {
+            background-color: #cdd9e1;
+            cursor: not-allowed;
+        }
+    }
+
+}
+
+.switch-container {
+
+    margin-top: 30px;
+    .switch-button {
+        background: #fff;
+        border: 1px solid black;
+        border-radius: 30px;
+        overflow: hidden;
+        width: 250px;
+        color: black;
+        position: relative;
+        padding-right: 120px;
+        position: relative;
+      
+        &:before {
+          content: "Debit";
+          font-weight: bolder;
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          right: 0;
+          width: 90px;
+          z-index: 3;
+          pointer-events: none;
+        }
+      
+        &-checkbox {
+          cursor: pointer;
+          position: absolute;
+          top: 0;
+          left: 0;
+          bottom: 0;
+          width: 100%;
+          height: 100%;
+          opacity: 0;
+          z-index: 2;
+      
+          &:checked + .switch-button-label:before {
+            transform: translateX(120px);
+            transition: transform 300ms linear;
+          }
+      
+          & + .switch-button-label {
+            position: relative;
+            display: block;
+            user-select: none;
+            pointer-events: none;
+      
+            &:before {
+              content: "";
+              background: #000;
+              height: 100%;
+              width: 100%;
+              position: absolute;
+              left: 0;
+              top: 0;
+              border-radius: 30px;
+              transform: translateX(0);
+              transition: transform 300ms;
+            }
+      
+            .switch-button-label-span {
+                padding-left: 40px;
+                font-weight: bolder;
+                position: relative;
+            }
+          }
+        }
+      }
+      * {
+        box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+      }
+  }
+
+  
+

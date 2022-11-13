@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { WalletService } from 'src/app/services/wallet.service';
+
 
 @Component({
   selector: 'app-transaction-view',
@@ -7,9 +9,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TransactionViewComponent implements OnInit {
 
-  constructor() { }
+  public transactions = [];
 
-  ngOnInit(): void {
-  }
+  constructor(private walletService: WalletService) { }
+
+    ngOnInit(): void {
+        this.getTransactions();
+    }
+
+    async getTransactions(){
+      this.transactions = await this.walletService.getTransactions(localStorage.getItem('walletId'))
+    }
 
 }

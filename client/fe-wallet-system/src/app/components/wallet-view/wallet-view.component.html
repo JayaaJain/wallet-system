@@ -1,21 +1,46 @@
-<!-- <h4 *ngIf="isWalletExists">
-    You already have a wallet! Below are the details of your account.
+<h4 *ngIf="isWalletExists">
+    Below are the details of your account. Now you can start using your wallet for payments!
 </h4>
 <div class="wallet-form" *ngIf="isWalletExists">
     <form [formGroup]="addWalletForm">
         <div class="name">
-            <label>Wallet Name*</label>
-            <input type="text" formControlName="walletName" value="">
+            <label>Wallet Name</label>
+            <input type="text" formControlName="walletName" readonly>
         </div>
         <div class="balance">
             <label>Balance Amount </label>
-            <input type="text" formControlName="balance" value="">
+            <input type="text" formControlName="balance" readonly>
         </div>
-        <div class="submit-button">
-            <button [disabled]="!addWalletForm.valid" (click)="setupWallet()" class="primary-button">Submit</button>
-        </div>
+        <form [formGroup]="paymentForm">
+            <div class="switch-container">
+                <div class="switch-button">
+                    <input class="switch-button-checkbox"
+                        type="checkbox" (click)="getType(isCredit)">
+                    <label class="switch-button-label"><span class="switch-button-label-span">Credit</span></label>
+                </div>
+            </div>
+            <div class="amount">
+                <label>Amount</label>
+                <input type="text" formControlName="amount"
+                    [ngClass]="isPayFormInvalid('amount') ? 'error': 'success' ">
+                <span class="input-text-helper" *ngIf="isPayFormInvalid('amount')">
+                    <div>Valid Amount is required</div>
+                </span>
+            </div>
+            <div class="description">
+                <label>Description </label>
+                <input type="text" formControlName="description"
+                    [ngClass]="isPayFormInvalid('description') ? 'error': 'success' ">
+                <span class="input-text-helper" *ngIf="isPayFormInvalid('description')">
+                    <div>Valid description is required</div>
+                </span>
+            </div>
+            <div class="submit-button">
+                <button [disabled]="!paymentForm.valid" (click)="payment()" class="primary-button">Pay</button>
+            </div>
+        </form>
     </form>
-</div> -->
+</div>
 
 <h4 *ngIf="!isWalletExists">
     Let's setup a new wallet! Please fill the below details to create a new account.
@@ -25,23 +50,22 @@
         <div class="name">
             <label>Wallet Name*</label>
             <input type="text" formControlName="walletName"
-            [ngClass]="isFormInvalid('walletName') ? 'error': 'success' " >
+                [ngClass]="isFormInvalid('walletName') ? 'error': 'success' ">
             <span class="input-text-helper" *ngIf="isFormInvalid('walletName')">
                 <div>Wallet name is required</div>
             </span>
             <span class="status-icons">
-              <i aria-hidden="true" class="fa fa-times-circle error-icon"></i>
+                <i aria-hidden="true" class="fa fa-times-circle error-icon"></i>
             </span>
         </div>
         <div class="balance">
             <label>Balance Amount </label>
-            <input type="text" formControlName="balance"
-            [ngClass]="isFormInvalid('balance') ? 'error': 'success' " >
+            <input type="text" formControlName="balance" [ngClass]="isFormInvalid('balance') ? 'error': 'success' ">
             <span class="input-text-helper" *ngIf="isFormInvalid('balance')">
                 <div>Enter a valid amount.</div>
             </span>
             <span class="status-icons">
-              <i aria-hidden="true" class="fa fa-times-circle error-icon"></i>
+                <i aria-hidden="true" class="fa fa-times-circle error-icon"></i>
             </span>
         </div>
         <div class="submit-button">

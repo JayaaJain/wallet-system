@@ -1,1 +1,18 @@
-<p>transaction-view works!</p>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Amount</th>
+      <th scope="col">Balance</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let trans of transactions; let pointIndex=index;">
+      <th scope="row">{{pointIndex+1}}</th>
+      <td>{{trans.amount}}</td>
+      <td>{{trans.balance}}</td>
+      <td>{{trans.description}}</td>
+    </tr>
+  </tbody>
+</table>
