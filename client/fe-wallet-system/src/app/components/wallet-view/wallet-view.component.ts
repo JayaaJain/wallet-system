@@ -14,7 +14,7 @@ export class WalletViewComponent implements OnInit {
   public isWalletExists: boolean = false;
 
   constructor(private formBuilder: UntypedFormBuilder, private helperService: HelperService,
-     private walletService: WalletService) {
+    private walletService: WalletService) {
     this.addWalletForm = this.formBuilder.group({
       walletName: ['', Validators.required],
       balance: ['', Validators.pattern('^[+-]?([0-9]*[.])?[0-9]+$')]
@@ -22,27 +22,28 @@ export class WalletViewComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.helperService.walletId='13b00980-fb1c-44b1-b968-63e42148ec30'
-    this.getWallet()
+    this.getWallet();
   }
 
-  getWallet() {
-    if(this.helperService.walletId.length) {
+  async getWallet() {
+    if (this.helperService.walletId.length) {
       this.isWalletExists = true;
-      this.walletService.getWallet(this.helperService.walletId).subscribe((res) => {
-        console.log(res);
-      })
+      let res = await this.walletService.getWallet(this.helperService.walletId)
+      console.log(res);
     } else {
       this.isWalletExists = false;
     }
   }
 
-  setupWallet() {
+  async setupWallet() {
     let walletName = this.addWalletForm.controls['walletName'].value;
-    this.walletService.setupWallet(walletName).subscribe((res) => {
-      // localStorage.setItem(this.helperService.walletId, res.id)
-      console.log(res);
-    })
+    let res = await this.walletService.setupWallet(walletName)
+    if (res?.body) {
+      localStorage.setItem('walletId', res.body['id']);
+      this.helperService.walletId = res.body['id']
+      this.getWallet();
+      console.log(this.helperService.walletId);
+    }
   }
 
 }
