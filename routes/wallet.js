@@ -24,7 +24,7 @@ const Transaction = mongoose.model('Transaction', new mongoose.Schema({
 
 router.post('/setup', async (req, res) => {
     let name = req.body.name;
-    let balance = Number(req.body.balance.toFixed(4));
+    let balance = req.body.balance ? Number(req.body.balance.toFixed(4)) : 0;
     let walletId = uuidv4();
     const newTransaction = await addNewTransaction(walletId, balance, balance, 'Wallet setup successful');
     const wallet = new Wallet({
