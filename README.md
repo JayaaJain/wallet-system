@@ -1,4 +1,5 @@
 Backend service for Wallet system supporting
+
  • Setup wallet - POST /setup
  With account name a wallet of default balance: 0 is created.
  
