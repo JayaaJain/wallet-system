@@ -18,6 +18,7 @@ export class TransactionViewComponent implements OnInit {
     }
 
     async getTransactions(){
+      this.transactions = [];
       this.transactions = await this.walletService.getTransactions(localStorage.getItem('walletId'))
     }
 
