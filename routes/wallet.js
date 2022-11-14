@@ -75,7 +75,7 @@ router.get('/transactions', async (req, res) => {
     var skip = req.query.skip;
     var limit = req.query.limit;
 
-    const wallet = await Wallet.find({id: givenWalletId});
+    const wallet = await Wallet.findOne({id: givenWalletId});
 
     if(!wallet || !wallet.id) {
         const transactions = await Transaction.find({}).skip(skip).limit(limit);
