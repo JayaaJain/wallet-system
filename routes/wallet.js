@@ -36,7 +36,7 @@ router.post('/setup', async (req, res) => {
     const result = await wallet.save();
     const walletDetails = (({ id, name, balance, date }) => ({ id, balance, name, date }))(result);
     walletDetails['transactionId'] = result.transactions[0];
-    res.send(walletDetails);
+    return res.send(walletDetails);
 });
 
 router.get('/wallet/:id', async (req, res) => {
@@ -45,7 +45,7 @@ router.get('/wallet/:id', async (req, res) => {
     if(!wallet || !wallet.id) {
         return res.status(404).send({errors: {message: 'Object not found'}})
     }
-    // const walletDetails = (({ id, name, balance, date }) => ({ id, balance, name, date }))(wallet);
+    const walletDetails = (({ id, name, balance, date }) => ({ id, balance, name, date }))(wallet);
     return res.send(wallet);
 });
 
@@ -57,7 +57,7 @@ router.post('/transact/:walletId', async (req, res) => {
     const wallet = await Wallet.findOne({id: givenWalletId});
 
     if(!wallet || !wallet.id) {
-        res.status(404).send({errors: {message: 'Object not found'}})
+        return res.status(404).send({errors: {message: 'Object not found'}})
     }
 
     wallet.balance = parseFloat(wallet.balance) + parseFloat(amount);
@@ -67,7 +67,7 @@ router.post('/transact/:walletId', async (req, res) => {
     const result = await wallet.save();
     const walletDetails = (({ balance }) => ({ balance }))(result);
     walletDetails['transactionId'] = newTransaction.id;
-    res.send(walletDetails);
+    return res.send(walletDetails);
 });
 
 router.get('/transactions', async (req, res) => {
@@ -79,10 +79,10 @@ router.get('/transactions', async (req, res) => {
 
     if(!wallet || !wallet.id) {
         const transactions = await Transaction.find({}).skip(skip).limit(limit);
-        res.send(transactions);
+        return res.send(transactions);
     }
     const transactions = await Transaction.find({walletId: givenWalletId}).skip(skip).limit(limit);
-    res.send(transactions);
+    return res.send(transactions);
 });
 
 async function addNewTransaction(walletId, amount, balance, description) {
