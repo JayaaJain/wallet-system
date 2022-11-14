@@ -46,7 +46,7 @@ router.get('/wallet/:id', async (req, res) => {
         return res.status(404).send({errors: {message: 'Object not found'}})
     }
     const walletDetails = (({ id, name, balance, date }) => ({ id, balance, name, date }))(wallet);
-    return res.send(wallet);
+    return res.send(walletDetails);
 });
 
 router.post('/transact/:walletId', async (req, res) => {
