@@ -42,7 +42,7 @@ router.post('/setup', async (req, res) => {
 router.get('/wallet/:id', async (req, res) => {
     var givenWalletId = req.params.id;
     const wallet = await Wallet.findOne({id: givenWalletId}).select("id balance name date");
-    if(!wallet) {
+    if(!wallet || !wallet.id) {
         res.status(404).send({errors: {message: 'Object not found'}})
     }
     const walletDetails = (({ id, name, balance, date }) => ({ id, balance, name, date }))(wallet);
@@ -56,7 +56,7 @@ router.post('/transact/:walletId', async (req, res) => {
 
     const wallet = await Wallet.findOne({id: givenWalletId});
 
-    if(!wallet) {
+    if(!wallet || !wallet.id) {
         res.status(404).send({errors: {message: 'Object not found'}})
     }
 
@@ -77,8 +77,9 @@ router.get('/transactions', async (req, res) => {
 
     const wallet = await Wallet.find({id: givenWalletId});
 
-    if(!wallet) {
-        res.status(404).send({errors: {message: 'Object not found'}})
+    if(!wallet || !wallet.id) {
+        const transactions = await Transaction.find({}).skip(skip).limit(limit);
+        res.send(transactions);
     }
     const transactions = await Transaction.find({walletId: givenWalletId}).skip(skip).limit(limit);
     res.send(transactions);
